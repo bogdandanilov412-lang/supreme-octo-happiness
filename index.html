@@ -1,185 +1,115 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<title>Трекер моих успехов и благодарностей</title>
-<style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Трекер успехов</title>
+
+  <!-- PWA/иконка (подключим файлы на следующих шагах) -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#2c3e50">
+
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #2c3e50;
+      --muted: #7b8a97;
+      --primary: #2c3e50;
+      --radius: 14px;
+      --shadow: 0 6px 18px rgba(0,0,0,.06);
+    }
+    * { box-sizing: border-box; }
     body {
-        font-family: Arial, sans-serif;
-        background: #f0f2f5;
-        margin: 0;
-        padding: 0;
-        color: #333;
+      margin: 0; padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, "Helvetica Neue", sans-serif;
+      background: var(--bg); color: var(--text);
     }
+    .wrap { max-width: 820px; margin: 0 auto; }
     header {
-        background: linear-gradient(135deg, #007bff, #00c6ff);
-        color: white;
-        padding: 20px;
-        text-align: center;
+      text-align: center; margin: 6px 0 18px;
     }
-    h1 { margin: 0; }
+    h1 {
+      margin: 0 0 6px; font-size: 28px;
+    }
+    .tagline { color: var(--muted); font-size: 14px; }
     section {
-        max-width: 800px;
-        margin: auto;
-        padding: 20px;
-        background: white;
-        margin-top: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      background: var(--card); border-radius: var(--radius);
+      padding: 16px; margin: 14px 0; box-shadow: var(--shadow);
     }
-    h2 { color: #007bff; }
-    ul { padding-left: 20px; }
-    .progress-bar {
-        background: #e0e0e0;
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 10px;
+    h2 { margin: 4px 0 10px; font-size: 18px; }
+    .task {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; margin: 8px 0;
+      border: 1px solid #eef1f5; border-radius: 12px; background: #fff;
     }
-    .progress {
-        background: #00c6ff;
-        height: 20px;
-        width: 0%;
-        transition: width 0.5s;
+    .task input[type="checkbox"] {
+      width: 20px; height: 20px;
+      accent-color: #2c3e50;
+      flex: 0 0 auto;
     }
-    button {
-        background: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        margin-top: 10px;
-        cursor: pointer;
-        border-radius: 5px;
+    .task label {
+      cursor: pointer; flex: 1; line-height: 1.35;
     }
-    button:hover { background: #0056b3; }
-    .quote {
-        font-style: italic;
-        margin-top: 10px;
-        padding: 10px;
-        background: #f8f9fa;
-        border-left: 4px solid #007bff;
+    footer {
+      text-align: center; color: var(--muted); font-size: 13px; margin-top: 18px;
     }
-    input[type="checkbox"] {
-        margin-right: 10px;
-    }
-</style>
+    .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <header>
+      <h1>✨ Трекер моих успехов</h1>
+      <div class="tagline">Фокус: каждый день, неделя, месяц — к ENJI</div>
+    </header>
 
-<header>
-    <h1>Трекер моих успехов и благодарностей</h1>
-    <p>Путь от Пункта А к Пункту Б — шаг за шагом, с Тони Роббинсом!</p>
-</header>
+    <section>
+      <h2>Цели на месяц</h2>
+      <div class="task"><input id="m1" type="checkbox"><label for="m1">Составить дорожную карту ENJI</label></div>
+      <div class="task"><input id="m2" type="checkbox"><label for="m2">Сделать прототип ENJI</label></div>
+      <div class="task"><input id="m3" type="checkbox"><label for="m3">Найти потенциальных менторов</label></div>
+      <div class="task"><input id="m4" type="checkbox"><label for="m4">Физкультура 8 раз</label></div>
+      <div class="task"><input id="m5" type="checkbox"><label for="m5">Медитация 20 дней</label></div>
+      <div class="hint">Совет: отмечай фактическое выполнение — не планы.</div>
+    </section>
 
-<section>
-    <h2>Главные цели на год</h2>
-    <ul id="year-goals">
-        <li><input type="checkbox"> Запустить MVP ENJI</li>
-        <li><input type="checkbox"> Найти ментора или бизнес-ангела</li>
-        <li><input type="checkbox"> Выпустить ENJI на рынок</li>
-        <li><input type="checkbox"> Заработать $1,000,000</li>
-        <li><input type="checkbox"> Стабилизировать доход ≥ 100 тыс. руб/мес</li>
-        <li><input type="checkbox"> Улучшить здоровье (спина, физкультура)</li>
-        <li><input type="checkbox"> Заняться медитацией</li>
-        <li><input type="checkbox"> Выучиться на психолога-мета</li>
-    </ul>
-    <div class="progress-bar"><div class="progress" id="year-progress"></div></div>
-</section>
+    <section>
+      <h2>Цели на неделю</h2>
+      <div class="task"><input id="w1" type="checkbox"><label for="w1">Физкультура 3 раза</label></div>
+      <div class="task"><input id="w2" type="checkbox"><label for="w2">2 встречи или звонка по ENJI</label></div>
+      <div class="task"><input id="w3" type="checkbox"><label for="w3">1–2 часа обучения психологии</label></div>
+      <div class="task"><input id="w4" type="checkbox"><label for="w4">Завершить 1 задачу по ENJI</label></div>
+    </section>
 
-<section>
-    <h2>Цели на месяц</h2>
-    <ul id="month-goals">
-        <li><input type="checkbox"> Составить дорожную карту ENJI</li>
-        <li><input type="checkbox"> Сделать прототип ENJI</li>
-        <li><input type="checkbox"> Найти потенциальных менторов</li>
-        <li><input type="checkbox"> Физкультура 8 раз</li>
-        <li><input type="checkbox"> Медитация 20 дней</li>
-    </ul>
-    <div class="progress-bar"><div class="progress" id="month-progress"></div></div>
-</section>
+    <section>
+      <h2>Ежедневные шаги</h2>
+      <div class="task"><input id="d1" type="checkbox"><label for="d1">10 минут медитации</label></div>
+      <div class="task"><input id="d2" type="checkbox"><label for="d2">15 минут упражнений для спины</label></div>
+      <div class="task"><input id="d3" type="checkbox"><label for="d3">1 задача по ENJI</label></div>
+      <div class="task"><input id="d4" type="checkbox"><label for="d4">1 действие для нетворкинга</label></div>
+    </section>
 
-<section>
-    <h2>Цели на неделю</h2>
-    <ul id="week-goals">
-        <li><input type="checkbox"> Физкультура 3 раза</li>
-        <li><input type="checkbox"> 2 встречи или звонка по ENJI</li>
-        <li><input type="checkbox"> 1–2 часа обучения психологии</li>
-        <li><input type="checkbox"> Завершить одну задачу по ENJI</li>
-    </ul>
-    <div class="progress-bar"><div class="progress" id="week-progress"></div></div>
-</section>
+    <footer>Сделано для ENJI 🌱</footer>
+  </div>
 
-<section>
-    <h2>Ежедневные шаги</h2>
-    <ul id="day-goals">
-        <li><input type="checkbox"> 10 минут медитации</li>
-        <li><input type="checkbox"> 15 минут упражнений для спины</li>
-        <li><input type="checkbox"> 1 задача по ENJI</li>
-        <li><input type="checkbox"> 1 действие для нетворкинга</li>
-    </ul>
-    <div class="progress-bar"><div class="progress" id="day-progress"></div></div>
-</section>
-
-<section>
-    <h2>Мотивация от Тони Роббинса</h2>
-    <button onclick="showQuote()">Показать цитату</button>
-    <div class="quote" id="quote"></div>
-</section>
-
-<script>
-const quotes = [
-    "Ваши решения, а не ваши условия, определяют вашу судьбу.",
-    "Если вы делаете то, что всегда делали, вы получите то, что всегда получали.",
-    "Секрет успеха — это делать больше, чем от вас ожидают.",
-    "Люди не ленивы. У них просто нет вдохновляющих целей.",
-    "Измени свои ожидания на признательность, и твоя жизнь изменится."
-];
-
-function showQuote() {
-    const q = quotes[Math.floor(Math.random() * quotes.length)];
-    document.getElementById('quote').innerText = q;
-}
-
-function updateProgress(sectionId, progressId) {
-    const checkboxes = document.querySelectorAll(`#${sectionId} input[type="checkbox"]`);
-    const total = checkboxes.length;
-    let checked = 0;
-    checkboxes.forEach(cb => { if (cb.checked) checked++; });
-    document.getElementById(progressId).style.width = (checked / total) * 100 + '%';
-}
-
-function saveProgress() {
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    const states = [];
-    checkboxes.forEach(cb => states.push(cb.checked));
-    localStorage.setItem('tracker', JSON.stringify(states));
-}
-
-function loadProgress() {
-    const states = JSON.parse(localStorage.getItem('tracker'));
-    if (!states) return;
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach((cb, i) => cb.checked = states[i]);
-}
-
-document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-    cb.addEventListener('change', () => {
-        saveProgress();
-        updateProgress('year-goals', 'year-progress');
-        updateProgress('month-goals', 'month-progress');
-        updateProgress('week-goals', 'week-progress');
-        updateProgress('day-goals', 'day-progress');
-    });
-});
-
-window.onload = () => {
-    loadProgress();
-    updateProgress('year-goals', 'year-progress');
-    updateProgress('month-goals', 'month-progress');
-    updateProgress('week-goals', 'week-progress');
-    updateProgress('day-goals', 'day-progress');
-};
-</script>
-
+  <script>
+    // Хранилище состояния чекбоксов
+    const prefix = 'enji-tracker-';
+    const boxes = document.querySelectorAll('input[type="checkbox"]');
+    for (const cb of boxes) {
+      const key = prefix + cb.id;
+      const saved = localStorage.getItem(key);
+      if (saved === 'true') cb.checked = true;
+      cb.addEventListener('change', () => localStorage.setItem(key, cb.checked));
+      // Клик по тексту тоже переключает чекбокс
+      const label = document.querySelector('label[for="'+cb.id+'"]');
+      if (label) label.addEventListener('click', () => cb.click());
+    }
+  </script>
 </body>
 </html>
 
