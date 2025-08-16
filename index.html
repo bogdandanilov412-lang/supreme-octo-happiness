@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ежедневник успехов</title>
+<style>
+body { font-family: -apple-system, sans-serif; background:#f0f4f8; color:#333; margin:0; padding:0; display:flex; flex-direction:column; align-items:center;}
+header { padding:20px; text-align:center; background:#fff; width:100%; box-shadow:0 2px 4px rgba(0,0,0,0.1);}
+h1 { margin:0; }
+main { width:100%; max-width:480px; padding:20px; }
+section { background:#fff; padding:15px; margin-bottom:20px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,0.1);}
+input, button { width:100%; padding:10px; margin-top:5px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;}
+button { background:#009600; color:#fff; border:none; cursor:pointer;}
+button:hover { background:#007700;}
+ul { list-style:none; padding:0;}
+li { display:flex; justify-content:space-between; align-items:center; padding:5px 0;}
+.progress-bar { height:10px; background:#ddd; border-radius:5px; overflow:hidden; margin-top:10px;}
+.progress { height:10px; background:#009600; width:0%; transition: width 0.3s; }
+.growth { font-size:2em; text-align:center; margin:10px 0;}
+.quote { font-style:italic; text-align:center; margin:10px 0; color:#007700;}
+</style>
+</head>
+<body>
+<header>
+<h1>🌱 Ежедневник успехов</h1>
+<div class="growth" id="growth">🌱</div>
+<div class="quote" id="quote"></div>
+</header>
+<main>
+<section>
+<h2>Сегодня</h2>
+<input type="text" id="goalInput" placeholder="Добавить цель">
+<button id="addGoal">Добавить цель</button>
+<ul id="goalList"></ul>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+</section>
+
+<section>
+<h2>Благодарности</h2>
+<input type="text" id="gratitudeInput" placeholder="За что благодарны сегодня?">
+<button id="addGratitude">Добавить</button>
+<ul id="gratitudeList"></ul>
+</section>
+</main>
+
+<script>
+const quotes = [
+  "Сделай сегодня то, что другие не хотят, и завтра будешь жить как другие не могут.",
+  "Если вы делаете то, что всегда делали, получите то, что всегда получали.",
+  "Действие — ключ к успеху.",
+  "Каждый день — новая возможность стать лучше."
+];
+
+let goals = JSON.parse(localStorage.getItem('goals') || '[]');
+let gratitudes = JSON.parse(localStorage.getItem('gratitudes') || '[]');
+
+const goalList = document.getElementById('goalList');
+const goalInput = document.getElementById('goalInput');
+const progressBar = document.getElementById('progressBar');
+const growth = document.getElementById('growth');
+const quoteEl = document.getElementById('quote');
+
+const gratitudeList = document.getElementById('gratitudeList');
+const gratitudeInput = document.getElementById('gratitudeInput');
+
+function saveData() {
+    localStorage.setItem('goals', JSON.stringify(goals));
+    localStorage.setItem('gratitudes', JSON.stringify(gratitudes));
+}
+
+function updateProgress() {
+    const completed = goals.filter(g => g.done).length;
+    const percent = goals.length ? (completed / goals.length) * 100 : 0;
+    progressBar.style.width = percent + '%';
+    if(percent === 0) growth.textContent = '🌱';
+    else if(percent < 50) growth.textContent = '🌿';
+    else if(percent < 100) growth.textContent = '🌳';
+    else growth.textContent = '🌺';
+}
+
+function showQuote() {
+    const q = quotes[Math.floor(Math.random() * quotes.length)];
+    quoteEl.textContent = q;
+}
+
+function renderGoals() {
+    goalList.innerHTML = '';
+    if(goals.length === 0){
+        const li = document.createElement('li');
+        li.textContent = 'Целей пока нет';
+        goalList.appendChild(li);
+        updateProgress();
+        return;
+    }
+    goals.forEach((goal, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${goal.name}</span><input type="checkbox" ${goal.done ? 'checked' : ''} data-index="${index}">`;
+        goalList.appendChild(li);
+    });
+    updateProgress();
+}
+
+function renderGratitudes() {
+    gratitudeList.innerHTML = '';
+    if(gratitudes.length === 0){
+        const li = document.createElement('li');
+        li.textContent = 'Нет благодарностей';
+        gratitudeList.appendChild(li);
+        return;
+    }
+    gratitudes.forEach(g => {
+        const li = document.createElement('li');
+        li.textContent = g;
+        gratitudeList.appendChild(li);
+    });
+}
+
+document.getElementById('addGoal').addEventListener('click', () => {
+    const value = goalInput.value.trim();
+    if(value === '') return;
+    goals.push({name:value, done:false});
+    goalInput.value = '';
+    saveData();
+    renderGoals();
+    showQuote();
+});
+
+goalList.addEventListener('change', (e) => {
+    if(e.target.type === 'checkbox'){
+        const idx = e.target.dataset.index;
+        goals[idx].done = e.target.checked;
+        saveData();
+        updateProgress();
+        showQuote();
+    }
+});
+
+document.getElementById('addGratitude').addEventListener('click', () => {
+    const value = gratitudeInput.value.trim();
+    if(value === '') return;
+    gratitudes.push(value);
+    gratitudeInput.value = '';
+    saveData();
+    renderGratitudes();
+});
+
+renderGoals();
+renderGratitudes();
+showQuote();
+</script>
+</body>
+</html>
