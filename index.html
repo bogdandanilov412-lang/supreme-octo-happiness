@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Трекер успехов</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path fill='%23009600' d='M32 2C18 22 14 38 32 62c18-24 14-40 0-60z'/></svg>">
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin:0; padding:0; background:#f0f4f8; color:#333; display:flex; flex-direction:column; align-items:center;}
+header { padding:20px; text-align:center; background:#ffffff; width:100%; box-shadow:0 2px 4px rgba(0,0,0,0.1);}
+h1 { margin:0; font-size:1.8em; }
+main { padding:20px; width:100%; max-width:480px;}
+section { margin-bottom:20px; background:#fff; padding:15px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,0.1);}
+input, select, button { width:100%; padding:10px; margin-top:5px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;}
+button { background:#009600; color:#fff; border:none; cursor:pointer;}
+button:hover { background:#007700;}
+ul { list-style:none; padding:0;}
+li { padding:5px 0; display:flex; justify-content:space-between; }
+.progress-bar { height:10px; background:#ddd; border-radius:5px; overflow:hidden; margin-top:5px;}
+.progress { height:10px; background:#009600; width:0%; transition: width 0.3s; }
+.growth { font-size:2em; text-align:center; margin:10px 0;}
+</style>
+</head>
+<body>
+<header>
+<h1>🌱 Трекер успехов</h1>
+<div class="growth" id="growth">🌱</div>
+</header>
+<main>
+<section>
+<h2>Добавить цель</h2>
+<input type="text" id="goalInput" placeholder="Название цели">
+<select id="goalPeriod">
+<option value="day">День</option>
+<option value="week">Неделя</option>
+<option value="month">Месяц</option>
+<option value="year">Год</option>
+</select>
+<button id="addGoal">Добавить цель</button>
+<ul id="goalList"></ul>
+<div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+</section>
+<section>
+<h2>Благодарности</h2>
+<input type="text" id="gratitudeInput" placeholder="За что благодарны сегодня?">
+<button id="addGratitude">Добавить</button>
+<ul id="gratitudeList"></ul>
+</section>
+</main>
+<script>
+let goals = JSON.parse(localStorage.getItem('goals') || '[]');
+let gratitudes = JSON.parse(localStorage.getItem('gratitudes') || '[]');
+
+const goalList = document.getElementById('goalList');
+const goalInput = document.getElementById('goalInput');
+const goalPeriod = document.getElementById('goalPeriod');
+const progressBar = document.getElementById('progressBar');
+const growth = document.getElementById('growth');
+
+const gratitudeList = document.getElementById('gratitudeList');
+const gratitudeInput = document.getElementById('gratitudeInput');
+
+function saveData() {
+    localStorage.setItem('goals', JSON.stringify(goals));
+    localStorage.setItem('gratitudes', JSON.stringify(gratitudes));
+}
+
+function updateGrowth() {
+    const completed = goals.filter(g => g.done).length;
+    const percent = goals.length ? (completed / goals.length) * 100 : 0;
+    progressBar.style.width = percent + '%';
+    if(percent === 0) growth.textContent = '🌱';
+    else if(percent < 50) growth.textContent = '🌿';
+    else if(percent < 100) growth.textContent = '🌳';
+    else growth.textContent = '🌺';
+}
+
+function renderGoals() {
+    goalList.innerHTML = '';
+    goals.forEach((g, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span>${g.name} (${g.period})</span><input type="checkbox" ${g.done ? 'checked' : ''} data-index="${i}">`;
+        goalList.appendChild(li);
+    });
+    updateGrowth();
+}
+
+function renderGratitudes() {
+    gratitudeList.innerHTML = '';
+    gratitudes.forEach(g => {
+        const li = document.createElement('li');
+        li.textContent = g;
+        gratitudeList.appendChild(li);
+    });
+}
+
+document.getElementById('addGoal').addEventListener('click', () => {
+    if(goalInput.value.trim() === '') return;
+    goals.push({name: goalInput.value.trim(), period: goalPeriod.value, done:false});
+    goalInput.value = '';
+    saveData();
+    renderGoals();
+});
+
+goalList.addEventListener('change', (e) => {
+    if(e.target.type === 'checkbox') {
+        const idx = e.target.dataset.index;
+        goals[idx].done = e.target.checked;
+        saveData();
+        updateGrowth();
+    }
+});
+
+document.getElementById('addGratitude').addEventListener('click', () => {
+    if(gratitudeInput.value.trim() === '') return;
+    gratitudes.push(gratitudeInput.value.trim());
+    gratitudeInput.value = '';
+    saveData();
+    renderGratitudes();
+});
+
+// Инициализация
+renderGoals();
+renderGratitudes();
+</script>
+</body>
+</html>
