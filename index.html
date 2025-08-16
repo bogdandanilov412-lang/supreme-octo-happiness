@@ -1,115 +1,145 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Трекер успехов</title>
-
-  <!-- PWA/иконка (подключим файлы на следующих шагах) -->
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="icon.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#2c3e50">
-
-  <style>
-    :root {
-      --bg: #f6f8fb;
-      --card: #ffffff;
-      --text: #2c3e50;
-      --muted: #7b8a97;
-      --primary: #2c3e50;
-      --radius: 14px;
-      --shadow: 0 6px 18px rgba(0,0,0,.06);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0; padding: 24px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, "Helvetica Neue", sans-serif;
-      background: var(--bg); color: var(--text);
-    }
-    .wrap { max-width: 820px; margin: 0 auto; }
-    header {
-      text-align: center; margin: 6px 0 18px;
-    }
-    h1 {
-      margin: 0 0 6px; font-size: 28px;
-    }
-    .tagline { color: var(--muted); font-size: 14px; }
-    section {
-      background: var(--card); border-radius: var(--radius);
-      padding: 16px; margin: 14px 0; box-shadow: var(--shadow);
-    }
-    h2 { margin: 4px 0 10px; font-size: 18px; }
-    .task {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; margin: 8px 0;
-      border: 1px solid #eef1f5; border-radius: 12px; background: #fff;
-    }
-    .task input[type="checkbox"] {
-      width: 20px; height: 20px;
-      accent-color: #2c3e50;
-      flex: 0 0 auto;
-    }
-    .task label {
-      cursor: pointer; flex: 1; line-height: 1.35;
-    }
-    footer {
-      text-align: center; color: var(--muted); font-size: 13px; margin-top: 18px;
-    }
-    .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Трекер успехов 🌱🌸</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2396C93D'/><path d='M50 20 L50 80 M20 50 L80 50' stroke='white' stroke-width='10'/></svg>">
+<style>
+body { font-family:-apple-system,BlinkMacSystemFont,sans-serif; margin:0; padding:0; background:#f9f9f9; }
+header { background:#96C93D; color:#fff; text-align:center; padding:20px; font-size:1.5em; }
+.container { padding:20px; }
+input, select, button { width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc; font-size:1em; }
+button { background:#96C93D; color:#fff; border:none; cursor:pointer; transition:0.3s; }
+button:hover { background:#82b636; }
+.goal { background:#fff; padding:10px; margin:10px 0; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+.progress { background:#eee; border-radius:5px; overflow:hidden; height:12px; margin-top:5px; }
+.progress-bar { height:12px; background:#96C93D; width:0%; transition:0.5s; }
+.motivation { margin:10px 0; font-weight:bold; color:#2e7d32; font-size:1em; text-align:center; }
+#plant-container { text-align:center; margin:20px 0; height:200px; position:relative; }
+.plant { display:inline-block; width:20px; background:#2e7d32; border-radius:10px 10px 0 0; transform-origin: bottom; transition:height 0.5s; }
+.leaf { width:10px; height:5px; background:#4caf50; position:absolute; border-radius:50%; opacity:0; transition:opacity 0.5s, transform 0.5s; }
+.flower { width:15px; height:15px; background:#ff4081; border-radius:50%; position:absolute; opacity:0; transition:opacity 0.5s; }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>✨ Трекер моих успехов</h1>
-      <div class="tagline">Фокус: каждый день, неделя, месяц — к ENJI</div>
-    </header>
 
-    <section>
-      <h2>Цели на месяц</h2>
-      <div class="task"><input id="m1" type="checkbox"><label for="m1">Составить дорожную карту ENJI</label></div>
-      <div class="task"><input id="m2" type="checkbox"><label for="m2">Сделать прототип ENJI</label></div>
-      <div class="task"><input id="m3" type="checkbox"><label for="m3">Найти потенциальных менторов</label></div>
-      <div class="task"><input id="m4" type="checkbox"><label for="m4">Физкультура 8 раз</label></div>
-      <div class="task"><input id="m5" type="checkbox"><label for="m5">Медитация 20 дней</label></div>
-      <div class="hint">Совет: отмечай фактическое выполнение — не планы.</div>
-    </section>
-
-    <section>
-      <h2>Цели на неделю</h2>
-      <div class="task"><input id="w1" type="checkbox"><label for="w1">Физкультура 3 раза</label></div>
-      <div class="task"><input id="w2" type="checkbox"><label for="w2">2 встречи или звонка по ENJI</label></div>
-      <div class="task"><input id="w3" type="checkbox"><label for="w3">1–2 часа обучения психологии</label></div>
-      <div class="task"><input id="w4" type="checkbox"><label for="w4">Завершить 1 задачу по ENJI</label></div>
-    </section>
-
-    <section>
-      <h2>Ежедневные шаги</h2>
-      <div class="task"><input id="d1" type="checkbox"><label for="d1">10 минут медитации</label></div>
-      <div class="task"><input id="d2" type="checkbox"><label for="d2">15 минут упражнений для спины</label></div>
-      <div class="task"><input id="d3" type="checkbox"><label for="d3">1 задача по ENJI</label></div>
-      <div class="task"><input id="d4" type="checkbox"><label for="d4">1 действие для нетворкинга</label></div>
-    </section>
-
-    <footer>Сделано для ENJI 🌱</footer>
+<header>🌱 Трекер успехов</header>
+<div class="container">
+  <select id="period">
+    <option value="day">День</option>
+    <option value="week">Неделя</option>
+    <option value="month">Месяц</option>
+    <option value="year">Год</option>
+  </select>
+  <input type="text" id="goalText" placeholder="Новая цель">
+  <button onclick="addGoal()">Добавить цель</button>
+  <div class="motivation" id="motivation"></div>
+  <div id="plant-container">
+    <div class="plant" id="plant"></div>
+    <div class="leaf" id="leaf1"></div>
+    <div class="leaf" id="leaf2"></div>
+    <div class="flower" id="flower"></div>
   </div>
+  <div id="goalsContainer"></div>
+</div>
 
-  <script>
-    // Хранилище состояния чекбоксов
-    const prefix = 'enji-tracker-';
-    const boxes = document.querySelectorAll('input[type="checkbox"]');
-    for (const cb of boxes) {
-      const key = prefix + cb.id;
-      const saved = localStorage.getItem(key);
-      if (saved === 'true') cb.checked = true;
-      cb.addEventListener('change', () => localStorage.setItem(key, cb.checked));
-      // Клик по тексту тоже переключает чекбокс
-      const label = document.querySelector('label[for="'+cb.id+'"]');
-      if (label) label.addEventListener('click', () => cb.click());
-    }
-  </script>
+<script>
+const goalsKey = 'myGoals';
+const motivationTexts = [
+  "Ты способен на большее! 💪",
+  "Каждый шаг приближает к цели! 🌟",
+  "Ты растешь и развиваешься! 🌱",
+  "Сосредоточься и действуй! 🔥",
+  "Великие дела начинаются с маленьких шагов! 🚀"
+];
+
+function getRandomMotivation() {
+  return motivationTexts[Math.floor(Math.random()*motivationTexts.length)];
+}
+
+function loadGoals() {
+  return JSON.parse(localStorage.getItem(goalsKey) || '{}');
+}
+
+function saveGoals(goals) {
+  localStorage.setItem(goalsKey, JSON.stringify(goals));
+}
+
+function updatePlant() {
+  const period = document.getElementById('period').value;
+  const goals = loadGoals()[period] || [];
+  const doneCount = goals.filter(g => g.done).length;
+  const plant = document.getElementById('plant');
+  plant.style.height = 50 + doneCount*15 + 'px';
+  const leaf1 = document.getElementById('leaf1');
+  const leaf2 = document.getElementById('leaf2');
+  const flower = document.getElementById('flower');
+
+  // Листья появляются при 2 и 4 выполненных целях
+  leaf1.style.opacity = doneCount>=2 ? 1 : 0;
+  leaf1.style.transform = doneCount>=2 ? 'translate(-10px,-20px) rotate(-20deg)' : 'translate(0,0)';
+  leaf2.style.opacity = doneCount>=4 ? 1 : 0;
+  leaf2.style.transform = doneCount>=4 ? 'translate(10px,-20px) rotate(20deg)' : 'translate(0,0)';
+
+  // Цветок появляется при 6 и более целей
+  flower.style.opacity = doneCount>=6 ? 1 : 0;
+  flower.style.bottom = doneCount>=6 ? (parseInt(plant.style.height)-10)+'px' : '0px';
+}
+
+function renderGoals() {
+  const container = document.getElementById('goalsContainer');
+  container.innerHTML = '';
+  const period = document.getElementById('period').value;
+  const goals = loadGoals()[period] || [];
+  goals.forEach((goal, i) => {
+    const div = document.createElement('div');
+    div.className = 'goal';
+    div.innerHTML = `
+      <div>${goal.text}</div>
+      <div class="progress"><div class="progress-bar" style="width:${goal.done?100:0}%"></div></div>
+      <button onclick="toggleDone(${i})">${goal.done?'Сбросить':'Выполнено'}</button>
+      <button onclick="deleteGoal(${i})" style="background:#e74c3c">Удалить</button>
+    `;
+    container.appendChild(div);
+  });
+  document.getElementById('motivation').innerText = getRandomMotivation();
+  updatePlant();
+}
+
+function addGoal() {
+  const text = document.getElementById('goalText').value.trim();
+  if(!text) return;
+  const period = document.getElementById('period').value;
+  const goals = loadGoals();
+  if(!goals[period]) goals[period]=[];
+  goals[period].push({text, done:false});
+  saveGoals(goals);
+  document.getElementById('goalText').value='';
+  renderGoals();
+}
+
+function toggleDone(index) {
+  const period = document.getElementById('period').value;
+  const goals = loadGoals();
+  goals[period][index].done = !goals[period][index].done;
+  saveGoals(goals);
+  renderGoals();
+}
+
+function deleteGoal(index) {
+  const period = document.getElementById('period').value;
+  const goals = loadGoals();
+  goals[period].splice(index,1);
+  saveGoals(goals);
+  renderGoals();
+}
+
+window.addEventListener('load', renderGoals);
+document.getElementById('period').addEventListener('change', renderGoals);
+</script>
+
 </body>
 </html>
+
 
